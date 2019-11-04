@@ -62,7 +62,7 @@ def get_access_token(video_id):
 
 
 
-def download_video(quality, response_obj):
+def download_video(response_obj):
 	print("[i] Generating download url..")
 	download_url = "https://usher.ttvnw.net/vod/" + response_obj['video_id'] + ".m3u8" + \
 					"?allow_source=true" + \
