@@ -77,23 +77,25 @@ def download_video(response_obj):
 	response = requests.get(download_url)
 	if response.status_code == 404:
 		return print("[e] Video streaming not found!")
+		
 	print("[i] Starting ffmpeg..")
 
 	#Use -map p:x for other resolutions (Not implemented yet)
-	command = "ffmpeg -hide_banner -loglevel error -i '"+ download_url +"' -acodec copy -vcodec copy " + response_obj['video_id'] + ".mp4 "
+	command = "ffmpeg -i '"+ download_url +"' -acodec copy -vcodec copy " + response_obj['video_id'] + ".mp4"
 	os.system(command)
 
 def parse_input():
 	match = []
 	if len(sys.argv) < 2:
-		print("[e] No URL to download")
+		print("[e] No URL to download, use: https://www.twitch.tv/videos/...")
+		quit()
 	else:
 		for videos in sys.argv:
 			if re.findall(r'\d+', videos):
 				match.append(re.findall(r'\d+', videos))
 		
 		for x in match:
-			print("\nDownloading video: " + x[0])
+			print("\n[i] Downloading video: " + x[0])
 			download_video(get_access_token(x[0]))
 	if not match:
 		print("[e] No match found")
