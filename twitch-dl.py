@@ -73,6 +73,10 @@ def download_video(response_obj):
 					"&sig=" + response_obj['sig']+ \
 					"&token=" + urllib.parse.quote(response_obj['auth']) + \
 					"&cdm=wv"
+
+	response = requests.get(download_url)
+	if response.status_code == 404:
+		return print("[e] Video streaming not found!")
 	print("[i] Starting ffmpeg..")
 
 	#Use -map p:x for other resolutions (Not implemented yet)
@@ -89,7 +93,7 @@ def parse_input():
 				match.append(re.findall(r'\d+', videos))
 		
 		for x in match:
-			print("Downloading video: " + x[0])
+			print("\nDownloading video: " + x[0])
 			download_video(get_access_token(x[0]))
 	if not match:
 		print("[e] No match found")
