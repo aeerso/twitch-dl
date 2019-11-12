@@ -76,20 +76,23 @@ def download_video(response_obj):
 	print("[i] Starting ffmpeg..")
 
 	#Use -map p:x for other resolutions (Not implemented yet)
-	command = "ffmpeg -i '"+ download_url +"' -acodec copy -vcodec copy out.mp4"
+	command = "ffmpeg -hide_banner -loglevel error -i '"+ download_url +"' -acodec copy -vcodec copy " + response_obj['video_id'] + ".mp4 "
 	os.system(command)
 
 def parse_input():
+	match = []
 	if len(sys.argv) < 2:
 		print("[e] No URL to download")
 	else:
-		match = re.findall(r'\d+', sys.argv[1])
-		if match:
-			video_id = match[0]
-			print("Downloading video: " + video_id)
-			download_video(get_access_token(video_id))
-		else:
-			print("[e] Can't parse this URL")
+		for videos in sys.argv:
+			if re.findall(r'\d+', videos):
+				match.append(re.findall(r'\d+', videos))
+		
+		for x in match:
+			print("Downloading video: " + x[0])
+			download_video(get_access_token(x[0]))
+	if not match:
+		print("[e] No match found")
 
 
 if __name__ == "__main__":
