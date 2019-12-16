@@ -10,6 +10,19 @@ def randomString(stringLength):
 	letters = string.ascii_lowercase
 	return ''.join([random.choice(string.ascii_lowercase + string.digits) for n in range(stringLength)])
 
+def getVideoInfos(video_id):
+	print("[i] Get video name...")
+
+	headers = {
+    	'Client-ID': 'kimne78kx3ncx6brgo4mv6wki5h1ko'
+	}
+
+	params = (
+    	('id', video_id),
+	)
+
+	response = requests.get('https://api.twitch.tv/helix/videos', headers=headers, params=params)
+	return(response.json()['data'][0]['title'])
 
 def get_access_token(video_id):
 
@@ -80,8 +93,10 @@ def download_video(response_obj):
 		
 	print("[i] Starting ffmpeg..")
 
+	video_title = "'" + getVideoInfos(response_obj['video_id']) + "'"
+
 	#Use -map p:x for other resolutions (Not implemented yet)
-	command = "ffmpeg -i '"+ download_url +"' -acodec copy -vcodec copy " + response_obj['video_id'] + ".mp4"
+	command = "ffmpeg -i '"+ download_url +"' -acodec copy -vcodec copy " + video_title + ".mp4"
 	os.system(command)
 
 def parse_input():
