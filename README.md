@@ -11,5 +11,5 @@ Basic usage: <code>python3 twitch-dl.py [video-id or https://www.twitch.tv/video
 - ~~Support for multiple links/videos~~ (commit [63e8fa2](
 https://github.com/0xf77/twitch-dl/commit/63e8fa228bc0a7cb92f0d0dd597683b1bd2c7eef))
 - Support for pausing/resuming
-- Support for custom filenames (default: out.mp4)
+- ~~Support for custom filenames (default: out.mp4)~~ (commit [39bbf02](https://github.com/0xf77/twitch-dl/commit/39bbf023a4e68283d9a14d7783370e5e9111a55e))
 - Rework the code (It is mostly a dirty hack)
