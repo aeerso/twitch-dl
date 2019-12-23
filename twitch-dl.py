@@ -1,121 +1,23 @@
-import requests
-import random
-import string
+import util
 import sys
-import urllib.parse
 import re
-import os
 
-def randomString(stringLength):
-	letters = string.ascii_lowercase
-	return ''.join([random.choice(string.ascii_lowercase + string.digits) for n in range(stringLength)])
+#Arrays for video queue
+match = []
 
-def getVideoInfos(video_id):
-	print("[i] Get video name...")
+print(util.bcolors.WARNING + "\ntwitch-dl ~ https://github.com/0xf77/twitch-dl" + util.bcolors.ENDC + "\n")
 
-	headers = {
-    	'Client-ID': 'kimne78kx3ncx6brgo4mv6wki5h1ko'
-	}
+if len(sys.argv) < 2:
+ 	print(util.bcolors.FAIL + "[e] No URL to download, use: https://www.twitch.tv/videos/..." + util.bcolors.ENDC)
+ 	quit()
 
-	params = (
-    	('id', video_id),
-	)
+for videos in sys.argv:
+	if re.findall(r'\d+', videos):
+		match.append(re.findall(r'\d+', videos)[0])
 
-	response = requests.get('https://api.twitch.tv/helix/videos', headers=headers, params=params)
-	return(response.json()['data'][0]['title'])
+print(util.bcolors.WARNING + "It could take some seconds to start the download!" + util.bcolors.ENDC)
+for video_id in match:
+	print(util.bcolors.OKGREEN + "Downloading: " + util.getVideoInfo(video_id)['title'] + " from " + util.getVideoInfo(video_id)['username'] + util.bcolors.ENDC)
+	util.downloadVideo(video_id)
 
-def get_access_token(video_id):
-
-	print("[i] Fetching access token..")
-
-	cookies = {
-    'server_session_id': randomString(32),
-    'unique_id': randomString(16),
-    'api_token': 'twilight.e9310e94d6a6cf6b2d9652c99f476621',
-    'twitch.lohp.countryCode': 'IT',
-	}
-
-	headers = {
-    'Content-Type': 'application/json; charset=UTF-8',
-    'Accept': 'application/vnd.twitchtv.v5+json; charset=UTF-8',
-    'Host': 'api.twitch.tv',
-    'Accept-Language': 'en-us',
-    'Accept-Encoding': 'br, gzip, deflate',
-    'Origin': 'https://www.twitch.tv',
-    'Referer': 'https://www.twitch.tv/videos/' + video_id,
-    'Connection': 'keep-alive',
-    'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_6) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/13.0.3 Safari/605.1.15',
-    #Seems that this Client-ID is specific for the not-logged user?
-    'Client-ID': 'kimne78kx3ncx6brgo4mv6wki5h1ko',
-    'X-Requested-With': 'XMLHttpRequest',
-	}
-
-
-	params = (
-    ('oauth_token', 'undefined'),
-    ('need_https', 'true'),
-    ('platform', 'web'),
-    ('player_type', 'site'),
-    ('player_backend', 'mediaplayer'),
-	)
-	response = requests.get('https://api.twitch.tv/api/vods/' + video_id + '/access_token', headers=headers, params=params, cookies=cookies)
-
-	if response.status_code == 200:
-		response_obj = {
-			'video_id': video_id,
-			'auth': response.json()['token'],
-			'sig': response.json()['sig']
-		}
-		print("[i] Got access token!")
-		return response_obj
-	else:
-		print("[e] Got an error requesting the token:")
-		print(response.json())
-		quit()
-
-
-
-def download_video(response_obj):
-	print("[i] Generating download url..")
-	download_url = "https://usher.ttvnw.net/vod/" + response_obj['video_id'] + ".m3u8" + \
-					"?allow_source=true" + \
-					"&p=5760802" + \
-					"&player_backend=mediaplayer" + \
-					"&playlist_include_framerate=true" + \
-					"&reassignments_supported=true" + \
-					"&sig=" + response_obj['sig']+ \
-					"&token=" + urllib.parse.quote(response_obj['auth']) + \
-					"&cdm=wv"
-
-	response = requests.get(download_url)
-	if response.status_code == 404:
-		return print("[e] Video streaming not found!")
-		
-	print("[i] Starting ffmpeg..")
-
-	video_title = "'" + getVideoInfos(response_obj['video_id']) + "'"
-
-	#Use -map p:x for other resolutions (Not implemented yet)
-	command = "ffmpeg -i '"+ download_url +"' -acodec copy -vcodec copy " + video_title + ".mp4"
-	os.system(command)
-
-def parse_input():
-	match = []
-	if len(sys.argv) < 2:
-		print("[e] No URL to download, use: https://www.twitch.tv/videos/...")
-		quit()
-	else:
-		for videos in sys.argv:
-			if re.findall(r'\d+', videos):
-				match.append(re.findall(r'\d+', videos))
-		
-		for x in match:
-			print("\n[i] Downloading video: " + x[0])
-			download_video(get_access_token(x[0]))
-	if not match:
-		print("[e] No match found")
-
-
-if __name__ == "__main__":
-	print("\nTwitch-dl * made with ♥ by 0xf77\n")
-	parse_input()
+print(util.bcolors.FAIL + "Bye! ❤️" + util.bcolors.ENDC)
