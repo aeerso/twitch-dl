@@ -56,6 +56,7 @@ def getDownloadUrl(video_id):
     return download_url
 
 def downloadVideo(video_id):
-    video_title = "'" + getVideoInfo(video_id)['username'] + " - " + getVideoInfo(video_id)['title'] + "'"
+    video_infos = getVideoInfo(video_id)
+    video_title = "'" + video_infos['username'] + " - " + video_infos['title'] + "'"
     command = "ffmpeg -i '"+ getDownloadUrl(video_id) +"' -v quiet -stats -acodec copy -vcodec copy " + str(video_title) + ".mp4"
     os.system(command)

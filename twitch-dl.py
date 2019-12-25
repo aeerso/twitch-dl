@@ -17,7 +17,8 @@ for videos in sys.argv:
 
 print(util.bcolors.WARNING + "It could take some seconds to start the download!" + util.bcolors.ENDC)
 for video_id in match:
-	print(util.bcolors.OKGREEN + "Downloading: " + util.getVideoInfo(video_id)['title'] + " from " + util.getVideoInfo(video_id)['username'] + util.bcolors.ENDC)
+	video_infos = util.getVideoInfo(video_id)
+	print(util.bcolors.OKGREEN + "Downloading: " + video_infos['title'] + " from " + video_infos['username'] + util.bcolors.ENDC)
 	util.downloadVideo(video_id)
 
 print(util.bcolors.FAIL + "Bye! ❤️" + util.bcolors.ENDC)
