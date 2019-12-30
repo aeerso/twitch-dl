@@ -4,6 +4,8 @@ It is still in a very alpha stage, a complete description and features coming so
 It is written with python3 and uses ffmpeg for downloading and encoding, also no login required.
 
 #### How to use:
+Download [FFmpeg](https://www.ffmpeg.org/download.html) executable for your OS and place it the project folder
+
 Install dependencies: <code>pip install -r requirements.txt</code>
 
 Run twitch-dl: <code>python3 twitch-dl.py [one or multiple video-id or twitch video urls]</code>
